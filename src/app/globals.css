@@ -1,0 +1,47 @@
+/* src/app/globals.css */
+@import "tailwindcss";
+
+:root {
+  --background: 210 11% 98%;
+  --foreground: 215 25% 27%;
+  --border: 214 13% 91%;
+  --primary: 221 83% 53%;
+  --primary-foreground: 0 0% 100%;
+  /* …другие переменные… */
+}
+
+body {
+  --primary: 221 83% 53%;
+  --primary-foreground: 0 0% 100%;
+}
+
+/* Тёмная тема */
+.dark {
+  --background: 224 71% 4%;
+  --foreground: 213 31% 91%;
+  --border: 215 28% 17%;
+}
+
+/* Ключевое: @theme inline для Tailwind v4 */
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  /* при необходимости можно добавить другие: primary, muted и т.п. */
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+/* Сторонний CSS остаётся без изменений */
+
+/* Принудительно для генерации Tailwind-класса */
+.text-primary-foreground {
+  color: hsl(var(--primary-foreground));
+}

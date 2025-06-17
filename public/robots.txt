@@ -1,0 +1,11 @@
+# Основные правила для всех crawlers
+User-agent: *
+Disallow: /*?*etext=
+Allow: /
+
+# Специфичные настройки для Яндекса
+User-agent: Yandex
+Clean-param: etext /
+
+# Универсальная карта сайта
+Sitemap: https://imageninja.ru/sitemap.xml
