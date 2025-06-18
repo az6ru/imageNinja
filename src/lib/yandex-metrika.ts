@@ -3,7 +3,13 @@
  * @description: Утилиты для работы с Яндекс Метрикой
  * @dependencies: -
  * @created: 2024-06-07
- */
+*/
+
+declare global {
+  interface Window {
+    ym?: (...args: unknown[]) => void;
+  }
+}
 
 // ID счетчика Яндекс Метрики
 export const YM_COUNTER_ID = 102422498;

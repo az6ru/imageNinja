@@ -5,13 +5,8 @@ import { pages } from '@/config/pages.config';
 import { OptimizePage } from '@/components/OptimizePage';
 import { Metadata } from 'next';
 
-// @ts-ignore - временно игнорируем проблему с типами Next.js
-type PageProps = {
-  params: any;
-  searchParams: { [key: string]: string | string[] | undefined };
-};
-
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function generateMetadata({ params }: any): Promise<Metadata> {
   const { slug } = params;
   const page = pages.find(p => p.slug === slug);
   if (!page) return notFound();
@@ -50,7 +45,8 @@ export async function generateViewport() {
   };
 }
 
-export default async function DynamicPage({ params }: PageProps) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default async function DynamicPage({ params }: any) {
   const { slug } = params;
   const page = pages.find(p => p.slug === slug);
   if (!page) return notFound();

@@ -52,9 +52,11 @@ function Calendar({
         ...classNames,
       }}
       components={{
+        // @ts-expect-error - custom icon not in types
         IconLeft: ({ className, ...props }) => (
           <ChevronLeft className={cn("h-4 w-4", className)} {...props} />
         ),
+        // @ts-expect-error - custom icon not in types
         IconRight: ({ className, ...props }) => (
           <ChevronRight className={cn("h-4 w-4", className)} {...props} />
         ),
