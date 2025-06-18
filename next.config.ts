@@ -3,6 +3,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  output: 'standalone',
   // ❗ `appDir` больше не нужен в Next.js 13.4+ (по умолчанию включён)
   // ❌ experimental: { appDir: true }
 };
