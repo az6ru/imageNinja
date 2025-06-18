@@ -19,6 +19,7 @@ export const insertOptimizedImageSchema = createInsertSchema(optimizedImages).om
   createdAt: true,
 });
 
+// @ts-expect-error - drizzle-zod types mismatch
 export type InsertOptimizedImage = z.infer<typeof insertOptimizedImageSchema>;
 export type OptimizedImage = typeof optimizedImages.$inferSelect;
 
