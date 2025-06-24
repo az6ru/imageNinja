@@ -5,6 +5,8 @@ import { Header } from '@/components/Header';
 import Script from 'next/script';
 import { CUSTOM_BODY_HTML } from '@/config/custom-html';
 import Image from 'next/image';
+import GoogleTagManagerHead from "@/components/GoogleTagManagerHead";
+import GoogleTagManagerBody from "@/components/GoogleTagManagerBody";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,6 +34,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <GoogleTagManagerHead />
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* Yandex.Metrika counter */}
@@ -54,6 +57,7 @@ export default function RootLayout({
         {/* /Yandex.Metrika counter */}
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <GoogleTagManagerBody />
         {/* Yandex.Metrika <noscript> */}
         <noscript>
           <div className="noscript-metrika">
