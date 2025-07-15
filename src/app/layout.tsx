@@ -21,9 +21,14 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "ImageNinja",
   description: "Online image optimization service",
-  icons: {
-    icon: "/favicon.svg",
-  },
+  icons: [
+    { rel: "icon", url: "/favicon_io/favicon.ico", type: "image/x-icon" },
+    { rel: "icon", url: "/favicon_io/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+    { rel: "icon", url: "/favicon_io/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+    { rel: "icon", url: "/favicon.svg", type: "image/svg+xml" },
+    { rel: "apple-touch-icon", url: "/favicon_io/apple-touch-icon.png", sizes: "180x180" },
+    { rel: "manifest", url: "/favicon_io/site.webmanifest" },
+  ],
 };
 
 export default function RootLayout({
