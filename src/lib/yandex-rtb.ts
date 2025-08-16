@@ -12,6 +12,7 @@ import { fullscreenAds } from "@/config/ads.config";
 declare global {
   interface Window {
     yaContextCb?: Array<() => void>;
+    yandexContextAsyncCallbacks?: Array<() => void>;
     Ya?: {
       Context?: {
         AdvManager?: {
@@ -37,6 +38,7 @@ function ensureRtbLoaderScript(): void {
 
   // Инициализируем очередь колбеков, если её нет
   window.yaContextCb = window.yaContextCb || [];
+  window.yandexContextAsyncCallbacks = window.yandexContextAsyncCallbacks || [];
 
   // Проверяем, подключён ли уже загрузчик
   const exists = !!document.querySelector('script[src*="yandex.ru/ads/system/context.js"]');
@@ -73,6 +75,7 @@ export function triggerFullscreenAd(options: TriggerFullscreenAdOptions = {}): v
   ensureRtbLoaderScript();
 
   window.yaContextCb = window.yaContextCb || [];
+  window.yandexContextAsyncCallbacks = window.yandexContextAsyncCallbacks || [];
 
   const platform: Platform = options.platform || detectPlatform();
   const blockId = platform === "desktop" ? fullscreenAds.desktop.blockId : fullscreenAds.touch.blockId;
@@ -82,7 +85,7 @@ export function triggerFullscreenAd(options: TriggerFullscreenAdOptions = {}): v
     return;
   }
 
-  window.yaContextCb.push(() => {
+  const invoke = () => {
     try {
       const AdvManager = window.Ya?.Context?.AdvManager;
       if (!AdvManager?.render) return;
@@ -94,7 +97,9 @@ export function triggerFullscreenAd(options: TriggerFullscreenAdOptions = {}): v
         onError: options.onError,
       });
     } catch {}
-  });
+  };
+  window.yaContextCb.push(invoke);
+  window.yandexContextAsyncCallbacks.push(invoke);
 }
 
 
