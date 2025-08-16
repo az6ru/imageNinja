@@ -217,114 +217,116 @@ export function ImageOptimizerApp() {
   const downloadImage = (image: ImageFile) => {
     if (!image.optimizedBlob) return;
 
-    const getFileName = () => {
-      const originalName = image.file.name;
-      const nameWithoutExt = originalName.substring(0, originalName.lastIndexOf('.')) || originalName;
-      
-      if (selectedFormat === 'keep') {
-        return `optimized_${originalName}`;
-      }
-      
-      const newExt = selectedFormat === 'jpeg' ? 'jpg' : selectedFormat;
-      return `optimized_${nameWithoutExt}.${newExt}`;
+    const doDownload = () => {
+      const getFileName = () => {
+        const originalName = image.file.name;
+        const nameWithoutExt = originalName.substring(0, originalName.lastIndexOf('.')) || originalName;
+        if (selectedFormat === 'keep') {
+          return `optimized_${originalName}`;
+        }
+        const newExt = selectedFormat === 'jpeg' ? 'jpg' : selectedFormat;
+        return `optimized_${nameWithoutExt}.${newExt}`;
+      };
+
+      const url = URL.createObjectURL(image.optimizedBlob!);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = getFileName();
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      sendYandexMetrikaGoal(YandexMetrikaGoal.DOWNLOAD_IMAGE, {
+        originalSize: image.originalSize,
+        optimizedSize: image.optimizedSize || 0,
+        format: selectedFormat === 'keep' 
+          ? image.file.type.split('/')[1]
+          : selectedFormat
+      });
     };
 
-    const url = URL.createObjectURL(image.optimizedBlob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = getFileName();
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-
-    // Пытаемся показать полноэкранную рекламу по клику на скачивание
-    triggerFullscreenAd();
-
-    // Отправляем событие в Яндекс Метрику при скачивании изображения
-    sendYandexMetrikaGoal(YandexMetrikaGoal.DOWNLOAD_IMAGE, {
-      originalSize: image.originalSize,
-      optimizedSize: image.optimizedSize || 0,
-      format: selectedFormat === 'keep' 
-        ? image.file.type.split('/')[1]
-        : selectedFormat
-    });
+    const shown = triggerFullscreenAd({ onClose: doDownload, onError: doDownload });
+    if (!shown) doDownload();
   };
 
   const downloadAllAsZip = async () => {
     const completedImages = images.filter(img => img.status === 'completed' && img.optimizedBlob);
     if (completedImages.length === 0) return;
-    setZipProgress(0);
-    setZipError(null);
-    try {
-      // Пытаемся показать полноэкранную рекламу по клику на скачивание ZIP
-      triggerFullscreenAd();
 
-      console.log('=== ZIP HANDLER STARTED ===');
-      const formData = new FormData();
-      completedImages.forEach((img, idx) => {
-        const getFileName = () => {
-          const originalName = img.file.name;
-          const nameWithoutExt = originalName.substring(0, originalName.lastIndexOf('.')) || originalName;
-          if (selectedFormat === 'keep') {
-            return `optimized_${originalName}`;
-          }
-          const newExt = selectedFormat === 'jpeg' ? 'jpg' : selectedFormat;
-          return `optimized_${nameWithoutExt}.${newExt}`;
-        };
-        formData.append('files', img.optimizedBlob!, getFileName());
-        setZipProgress(Math.round(((idx + 1) / completedImages.length) * 50)); // 0-50%: подготовка файлов
-      });
-      // Отправляем FormData на сервер
-      const apiUrl = window.location.hostname === 'localhost' 
-        ? '/api/download-zip' 
-        : `${window.location.origin}/api/download-zip`;
+    const startZip = async () => {
+      setZipProgress(0);
+      setZipError(null);
+      try {
+        console.log('=== ZIP HANDLER STARTED ===');
+        const formData = new FormData();
+        completedImages.forEach((img, idx) => {
+          const getFileName = () => {
+            const originalName = img.file.name;
+            const nameWithoutExt = originalName.substring(0, originalName.lastIndexOf('.')) || originalName;
+            if (selectedFormat === 'keep') {
+              return `optimized_${originalName}`;
+            }
+            const newExt = selectedFormat === 'jpeg' ? 'jpg' : selectedFormat;
+            return `optimized_${nameWithoutExt}.${newExt}`;
+          };
+          formData.append('files', img.optimizedBlob!, getFileName());
+          setZipProgress(Math.round(((idx + 1) / completedImages.length) * 50)); // 0-50%: подготовка файлов
+        });
+        // Отправляем FormData на сервер
+        const apiUrl = window.location.hostname === 'localhost' 
+          ? '/api/download-zip' 
+          : `${window.location.origin}/api/download-zip`;
         
-      console.log('Sending download-zip request to:', apiUrl);
-      
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        body: formData,
-        mode: 'cors', // Явно указываем режим CORS
-      });
-      setZipProgress(80); // 80% — сервер формирует архив
-      const contentType = response.headers.get('content-type') || '';
-      if (!response.ok || !contentType.includes('application/zip')) {
-        let reason = 'Не удалось создать ZIP файл';
-        try {
-          const errorText = await response.text();
-          const errJson = JSON.parse(errorText);
-          if (errJson.error) reason = errJson.error;
-        } catch {}
-        setZipError(reason);
-        throw new Error(reason);
-      }
-      const blob = await response.blob();
-      setZipProgress(100);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'optimized-images.zip';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      setTimeout(() => setZipProgress(null), 1000);
+        console.log('Sending download-zip request to:', apiUrl);
+        
+        const response = await fetch(apiUrl, {
+          method: 'POST',
+          body: formData,
+          mode: 'cors', // Явно указываем режим CORS
+        });
+        setZipProgress(80); // 80% — сервер формирует архив
+        const contentType = response.headers.get('content-type') || '';
+        if (!response.ok || !contentType.includes('application/zip')) {
+          let reason = 'Не удалось создать ZIP файл';
+          try {
+            const errorText = await response.text();
+            const errJson = JSON.parse(errorText);
+            if (errJson.error) reason = errJson.error;
+          } catch {}
+          setZipError(reason);
+          throw new Error(reason);
+        }
+        const blob = await response.blob();
+        setZipProgress(100);
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'optimized-images.zip';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        setTimeout(() => setZipProgress(null), 1000);
 
-      // Отправляем событие в Яндекс Метрику при скачивании ZIP-архива
-      sendYandexMetrikaGoal(YandexMetrikaGoal.DOWNLOAD_ZIP, {
-        count: completedImages.length,
-        totalSize: blob.size
-      });
-    } catch (error) {
-      setZipProgress(null);
-      setZipError(error instanceof Error ? error.message : String(error));
-      toast({
-        title: "Ошибка загрузки",
-        description: error instanceof Error ? error.message : String(error),
-        variant: "destructive",
-      });
-    }
+        // Отправляем событие в Яндекс Метрику при скачивании ZIP-архива
+        sendYandexMetrikaGoal(YandexMetrikaGoal.DOWNLOAD_ZIP, {
+          count: completedImages.length,
+          totalSize: blob.size
+        });
+      } catch (error) {
+        setZipProgress(null);
+        setZipError(error instanceof Error ? error.message : String(error));
+        toast({
+          title: "Ошибка загрузки",
+          description: error instanceof Error ? error.message : String(error),
+          variant: "destructive",
+        });
+      }
+    };
+
+    const shown = triggerFullscreenAd({ onClose: startZip, onError: startZip });
+    if (!shown) startZip();
   };
 
   const resetOptimizer = () => {

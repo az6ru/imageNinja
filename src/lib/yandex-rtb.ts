@@ -69,8 +69,8 @@ export interface TriggerFullscreenAdOptions {
  * Безопасно вызывает полноэкранный рекламный блок РСЯ.
  * Не бросает исключений и не блокирует основной поток.
  */
-export function triggerFullscreenAd(options: TriggerFullscreenAdOptions = {}): void {
-  if (typeof window === "undefined") return;
+export function triggerFullscreenAd(options: TriggerFullscreenAdOptions = {}): boolean {
+  if (typeof window === "undefined") return false;
 
   ensureRtbLoaderScript();
 
@@ -82,7 +82,7 @@ export function triggerFullscreenAd(options: TriggerFullscreenAdOptions = {}): v
 
   if (!blockId) {
     // Нет настроенного blockId — тихо выходим
-    return;
+    return false;
   }
 
   const invoke = () => {
@@ -100,6 +100,7 @@ export function triggerFullscreenAd(options: TriggerFullscreenAdOptions = {}): v
   };
   window.yaContextCb.push(invoke);
   window.yandexContextAsyncCallbacks.push(invoke);
+  return true;
 }
 
 
