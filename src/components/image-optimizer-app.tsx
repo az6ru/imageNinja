@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import type { ImageFile, OptimizationSettings } from "../shared/schema";
 import { sendYandexMetrikaGoal, YandexMetrikaGoal } from "@/lib/yandex-metrika";
+import { triggerFullscreenAd } from "@/lib/yandex-rtb";
 
 export function ImageOptimizerApp() {
   const [images, setImages] = useState<ImageFile[]>([]);
@@ -237,6 +238,9 @@ export function ImageOptimizerApp() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
+    // Пытаемся показать полноэкранную рекламу по клику на скачивание
+    triggerFullscreenAd();
+
     // Отправляем событие в Яндекс Метрику при скачивании изображения
     sendYandexMetrikaGoal(YandexMetrikaGoal.DOWNLOAD_IMAGE, {
       originalSize: image.originalSize,
@@ -253,6 +257,9 @@ export function ImageOptimizerApp() {
     setZipProgress(0);
     setZipError(null);
     try {
+      // Пытаемся показать полноэкранную рекламу по клику на скачивание ZIP
+      triggerFullscreenAd();
+
       console.log('=== ZIP HANDLER STARTED ===');
       const formData = new FormData();
       completedImages.forEach((img, idx) => {

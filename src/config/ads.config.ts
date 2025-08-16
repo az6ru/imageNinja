@@ -7,3 +7,9 @@ export const adSlots = {
 
 export type AdSlotId = keyof typeof adSlots; 
 
+// Полноэкранные блоки РСЯ. Заполните актуальными blockId из кабинета.
+export const fullscreenAds = {
+  desktop: { blockId: 'R-A-15762893-10' },
+  touch: { blockId: 'R-A-15762893-11' },
+};
+
