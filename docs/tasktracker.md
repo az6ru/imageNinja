@@ -4,7 +4,7 @@
 - **Шаги выполнения**:
   - [x] Изучить текущую интеграцию рекламы (`src/components/AdSlot.tsx`, `src/config/ads.config.ts`, `src/app/layout.tsx`).
   - [x] Добавить утилиту для вызова полноэкранного блока (`src/lib/yandex-rtb.ts`).
-  - [x] Расширить конфиг рекламных блоков (`fullscreenAds`) для desktop/touch.
+  - [x] Настроить `fullscreenAds` на `R-A-15762893-3` (из кабинета), временно отключить `faqInline` и `sidebar` до получения валидных ID.
   - [x] Вызвать полноэкранный блок при клике на `Скачать` и `Скачать всё в ZIP`.
   - [x] Обновить документацию (`docs/changelog.md`, текущий файл).
 - **Зависимости**: Требуются актуальные `blockId` для полноэкранных блоков в РСЯ (desktop и touch) в `src/config/ads.config.ts`.
