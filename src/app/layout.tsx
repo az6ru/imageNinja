@@ -9,6 +9,8 @@ import GoogleTagManagerHead from "@/components/GoogleTagManagerHead";
 import GoogleTagManagerBody from "@/components/GoogleTagManagerBody";
 import { FpjsClientProvider } from '@/components/FpjsClientProvider';
 
+export const dynamic = 'force-dynamic';
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -37,6 +39,9 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const apiKey = process.env.NEXT_PUBLIC_FPJS_API_KEY ?? '';
+  const envRegion = process.env.NEXT_PUBLIC_FPJS_REGION as string | undefined;
+  const region: 'eu' | 'us' | 'ap' = (envRegion === 'eu' || envRegion === 'us' || envRegion === 'ap') ? envRegion : 'eu';
   return (
     <html lang="en">
       <head>
@@ -63,7 +68,7 @@ export default function RootLayout({
         {/* /Yandex.Metrika counter */}
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <FpjsClientProvider>
+        <FpjsClientProvider apiKey={apiKey} region={region}>
           <GoogleTagManagerBody />
           {/* Yandex.Metrika <noscript> */}
           <noscript>
