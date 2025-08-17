@@ -9,3 +9,16 @@
   - [x] Обновить документацию (`docs/changelog.md`, текущий файл).
 - **Зависимости**: Требуются актуальные `blockId` для полноэкранных блоков в РСЯ (desktop и touch) в `src/config/ads.config.ts`.
 
+
+## Задача: Интеграция Fingerprint Pro React SDK
+- **Статус**: Завершена
+- **Описание**: Подключить SDK Fingerprint Pro к приложению Next.js (App Router), обернуть приложение в провайдер и добавить тестовую страницу для проверки получения `visitorId`.
+- **Шаги выполнения**:
+  - [x] Проанализировать структуру проекта (App Router, `src/app/layout.tsx`).
+  - [x] Установить зависимость `@fingerprintjs/fingerprintjs-pro-react`.
+  - [x] Добавить клиентский провайдер `FpjsClientProvider` и обернуть приложение в `src/app/layout.tsx`.
+  - [x] Создать страницу `/fingerprint-test` и вывести `visitorId` с кнопкой перезагрузки данных.
+  - [x] Запустить локально и проверить работоспособность (учесть adblock, задержку распространения ключа, регион `eu`).
+  - [x] Обновить документацию: `docs/changelog.md`, описание в `docs/project.md`.
+- **Зависимости**: Требуется публичный API-ключ Fingerprint Pro (`NEXT_PUBLIC_FPJS_API_KEY`), регион `eu`.
+

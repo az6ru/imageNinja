@@ -7,6 +7,7 @@ import { CUSTOM_BODY_HTML } from '@/config/custom-html';
 import Image from 'next/image';
 import GoogleTagManagerHead from "@/components/GoogleTagManagerHead";
 import GoogleTagManagerBody from "@/components/GoogleTagManagerBody";
+import { FpjsClientProvider } from '@/components/FpjsClientProvider';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -62,23 +63,25 @@ export default function RootLayout({
         {/* /Yandex.Metrika counter */}
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <GoogleTagManagerBody />
-        {/* Yandex.Metrika <noscript> */}
-        <noscript>
-          <div className="noscript-metrika">
-            <Image
-              src="https://mc.yandex.ru/watch/102422498"
-              alt=""
-              width={1}
-              height={1}
-              style={{ position: 'absolute', left: '-9999px' }}
-              unoptimized
-            />
-          </div>
-        </noscript>
-        <>{CUSTOM_BODY_HTML && <div dangerouslySetInnerHTML={{ __html: CUSTOM_BODY_HTML }} />}</>
-        <Header />
-        {children}
+        <FpjsClientProvider>
+          <GoogleTagManagerBody />
+          {/* Yandex.Metrika <noscript> */}
+          <noscript>
+            <div className="noscript-metrika">
+              <Image
+                src="https://mc.yandex.ru/watch/102422498"
+                alt=""
+                width={1}
+                height={1}
+                style={{ position: 'absolute', left: '-9999px' }}
+                unoptimized
+              />
+            </div>
+          </noscript>
+          <>{CUSTOM_BODY_HTML && <div dangerouslySetInnerHTML={{ __html: CUSTOM_BODY_HTML }} />}</>
+          <Header />
+          {children}
+        </FpjsClientProvider>
       </body>
     </html>
   );

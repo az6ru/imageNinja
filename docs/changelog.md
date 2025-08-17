@@ -11,3 +11,16 @@
 ### Исправлено
 - N/A
 
+
+## [2025-08-17] - Интеграция Fingerprint Pro React SDK
+### Добавлено
+- Зависимость `@fingerprintjs/fingerprintjs-pro-react`.
+- Оборачивание приложения провайдером `FpjsProvider` в `src/app/layout.tsx` c `region: 'eu'` и ключом из `NEXT_PUBLIC_FPJS_API_KEY`.
+- Тестовая страница `src/app/fingerprint-test/page.tsx` для проверки получения `visitorId` и полного ответа SDK.
+
+### Изменено
+- N/A
+
+### Исправлено
+- N/A
+
