@@ -24,3 +24,17 @@
 ### Исправлено
 - N/A
 
+
+## [2025-01-27] - Замена Google Tag Manager на gtm.imageninja.ru
+### Добавлено
+- N/A
+
+### Изменено
+- Заменены URL-адреса Google Tag Manager с `www.googletagmanager.com` на `gtm.imageninja.ru` в компонентах:
+  - `src/components/GoogleTagManagerHead.tsx` - скрипт gtm.js
+  - `src/components/GoogleTagManagerBody.tsx` - noscript iframe ns.html
+- ID веб-контейнера GTM остался прежним: `GTM-N7RPGWCC`
+
+### Исправлено
+- N/A
+

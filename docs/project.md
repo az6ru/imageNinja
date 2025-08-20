@@ -4,7 +4,7 @@
 
 ### Интеграции
 - Yandex.Metrika: подключена через `next/script` в `src/app/layout.tsx`.
-- Google Tag Manager: компоненты `GoogleTagManagerHead` и `GoogleTagManagerBody` в `src/app/layout.tsx`.
+- Google Tag Manager: компоненты `GoogleTagManagerHead` и `GoogleTagManagerBody` в `src/app/layout.tsx` с сервером тегов `gtm.imageninja.ru` (ID: GTM-N7RPGWCC).
 - Fingerprint Pro React SDK: провайдер `FpjsProvider` в `src/app/layout.tsx` с конфигурацией региона `eu` и ключом из `NEXT_PUBLIC_FPJS_API_KEY`.
 
 ### Новые компоненты и страницы
