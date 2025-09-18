@@ -245,9 +245,11 @@ export function ImageOptimizerApp() {
           : selectedFormat
       });
     };
-
-    const shown = triggerFullscreenAd({ onClose: doDownload, onError: doDownload });
-    if (!shown) doDownload();
+    // Сначала начинаем скачивание, затем пробуем показать рекламу в фоне
+    doDownload();
+    try {
+      triggerFullscreenAd();
+    } catch {}
   };
 
   const downloadAllAsZip = async () => {
@@ -325,8 +327,11 @@ export function ImageOptimizerApp() {
       }
     };
 
-    const shown = triggerFullscreenAd({ onClose: startZip, onError: startZip });
-    if (!shown) startZip();
+    // Сначала запускаем создание архива и скачивание, затем пробуем показать рекламу в фоне
+    await startZip();
+    try {
+      triggerFullscreenAd();
+    } catch {}
   };
 
   const resetOptimizer = () => {

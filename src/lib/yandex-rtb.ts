@@ -85,19 +85,49 @@ export function triggerFullscreenAd(options: TriggerFullscreenAdOptions = {}): b
     return false;
   }
 
+  // Тайм-аут на случай, если загрузчик РСЯ не отработал (adblock, сеть, сбой)
+  let safetyTimeoutId: number | undefined;
+  const clearSafety = () => {
+    if (safetyTimeoutId !== undefined) {
+      clearTimeout(safetyTimeoutId);
+      safetyTimeoutId = undefined;
+    }
+  };
+
+  const wrappedOnClose = () => {
+    clearSafety();
+    try { options.onClose?.(); } catch {}
+  };
+
+  const wrappedOnError = (err?: { type: string; code?: string | number; text?: string }) => {
+    clearSafety();
+    try { options.onError?.(err || { type: "unknown" }); } catch {}
+  };
+
   const invoke = () => {
     try {
       const AdvManager = window.Ya?.Context?.AdvManager;
-      if (!AdvManager?.render) return;
+      if (!AdvManager?.render) return; // если рендер недоступен — подстрахует safety timeout
       AdvManager.render({
         blockId,
         type: "fullscreen",
         platform,
-        onClose: options.onClose,
-        onError: options.onError,
+        onClose: wrappedOnClose,
+        onError: wrappedOnError,
       });
-    } catch {}
+    } catch {
+      // Если рендер бросил исключение — подстраховка
+      wrappedOnError({ type: "exception" });
+    }
   };
+
+  // Запускаем страховочный тайм-аут: если ни один коллбек не вызван, снимаем блокировку
+  try {
+    safetyTimeoutId = window.setTimeout(() => {
+      wrappedOnError({ type: "timeout" });
+    }, 2000);
+  } catch {}
+
   window.yaContextCb.push(invoke);
   window.yandexContextAsyncCallbacks.push(invoke);
   return true;
